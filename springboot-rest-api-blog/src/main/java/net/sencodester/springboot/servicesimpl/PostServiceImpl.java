@@ -1,12 +1,16 @@
 package net.sencodester.springboot.servicesimpl;
 
 import net.sencodester.springboot.entites.Post;
+import net.sencodester.springboot.exceptions.ResourceNotFoundException;
 import net.sencodester.springboot.payload.PostDto;
 import net.sencodester.springboot.repositories.PostRipository;
 import net.sencodester.springboot.services.PostService;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +41,12 @@ public class PostServiceImpl implements PostService {
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
         return posts.stream().map(this::mapToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public PostDto getPostById(long id) {
+        Post post = postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Post not found with","id", id));
+        return mapToDto(post);
     }
 
     // Convertir l'ENTITÉ en DTO
