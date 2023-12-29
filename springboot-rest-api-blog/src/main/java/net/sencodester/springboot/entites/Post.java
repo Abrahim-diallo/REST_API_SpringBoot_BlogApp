@@ -11,7 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "post") // Nom de la table au singulier de preferences
+@Table(name = "post")
 public class Post implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,7 @@ public class Post implements Serializable {
     private String content;
     @Column(name ="author", nullable = false)
     private String author;
-    @Column(name ="post_date", nullable = false) // Utilisation d'un nom de colonne en minuscules avec des underscores
+    @Column(name ="post_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date postDate; // Utilisation d'un nom de variable en "camelCase"
     @Column(name ="description", nullable = false)
