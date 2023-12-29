@@ -7,10 +7,10 @@ import net.sencodester.springboot.repositories.PostRipository;
 import net.sencodester.springboot.services.PostService;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +47,21 @@ public class PostServiceImpl implements PostService {
     public PostDto getPostById(long id) {
         Post post = postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Post not found with","id", id));
         return mapToDto(post);
+    }
+
+    @Override
+    public PostDto updatePost(PostDto postDto, long id) {
+        // get the post by id
+        Post post = postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Post not found with","id", id));
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+        post.setAuthor(postDto.getAuthor());
+        post.setPostDate(postDto.getPostDate());
+        post.setDescription(postDto.getDescription());
+        // Enregistrer l'ENTITÉ
+        Post updatePost = postRepository.save(post);
+        PostDto postResponse = mapToDto(updatePost);
+        return postResponse;
     }
 
     // Convertir l'ENTITÉ en DTO
