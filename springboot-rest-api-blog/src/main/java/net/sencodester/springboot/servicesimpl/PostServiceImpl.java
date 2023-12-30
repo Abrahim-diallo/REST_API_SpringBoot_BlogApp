@@ -3,8 +3,13 @@ package net.sencodester.springboot.servicesimpl;
 import net.sencodester.springboot.entites.Post;
 import net.sencodester.springboot.exceptions.ResourceNotFoundException;
 import net.sencodester.springboot.payload.PostDto;
+import net.sencodester.springboot.payload.PostResponse;
 import net.sencodester.springboot.repositories.PostRipository;
 import net.sencodester.springboot.services.PostService;
+import net.sencodester.springboot.utils.AppConstants;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -38,21 +43,41 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPosts() {
-        List<Post> posts = postRepository.findAll();
-        return posts.stream().map(this::mapToDto).collect(Collectors.toList());
-    }
+    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDirection) {
+        boolean isAscending = AppConstants.DEFAULT_SORT_DIRECTION.equalsIgnoreCase(sortDirection);
 
+        Page<Post> pageable = postRepository.findAll(
+                PageRequest.of(
+                        pageNo,
+                        pageSize,
+                        Sort.by(isAscending ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy)
+                )
+        );
+
+        List<PostDto> content = pageable.getContent().stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(content);
+        postResponse.setPageNo(pageable.getNumber());
+        postResponse.setPageSize(pageable.getSize());
+        postResponse.setTotalPages(pageable.getTotalPages());
+        postResponse.setTotalElements((int) pageable.getTotalElements());
+        postResponse.setLast(pageable.isLast());
+
+        return postResponse;
+    }
     @Override
     public PostDto getPostById(long id) {
-        Post post = postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Post not found with","id", id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post not found with", "id", id));
         return mapToDto(post);
     }
 
     @Override
     public PostDto updatePost(PostDto postDto, long id) {
         // get the post by id
-        Post post = postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Post not found with","id", id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post not found with", "id", id));
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
         post.setAuthor(postDto.getAuthor());

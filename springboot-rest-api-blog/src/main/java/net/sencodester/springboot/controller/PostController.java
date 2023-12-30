@@ -1,12 +1,14 @@
 package net.sencodester.springboot.controller;
 
 import net.sencodester.springboot.payload.PostDto;
+import net.sencodester.springboot.payload.PostResponse;
 import net.sencodester.springboot.services.PostService;
+import net.sencodester.springboot.utils.AppConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -22,9 +24,13 @@ public class PostController {
     }
     //----------------------get all posts rest api------
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts() {
-        List<PostDto> posts = postService.getAllPosts();
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+    public PostResponse getAllPosts(
+            @RequestParam(value = "pageNo", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int pageSize,
+            @RequestParam(value = "sortBy", required = false, defaultValue = AppConstants.DEFAULT_SORT_BY) String sortBy,
+            @RequestParam(value = "isAscending", required = false, defaultValue = AppConstants.DEFAULT_SORT_DIRECTION) String isAscending) {
+
+        return postService.getAllPosts(pageNo, pageSize, sortBy, isAscending);
     }
     //--------------------------get post by id--------------------------
     @GetMapping("/{id}")
