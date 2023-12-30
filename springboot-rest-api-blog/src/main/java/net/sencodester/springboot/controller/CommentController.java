@@ -1,0 +1,24 @@
+package net.sencodester.springboot.controller;
+
+import net.sencodester.springboot.payload.CommentDto;
+import net.sencodester.springboot.services.CommentService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/")
+public class CommentController {
+    private final CommentService commentService;
+
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
+    }
+
+    @PostMapping(value = "/posts/{postId}/comments", consumes = "application/json")
+    public ResponseEntity<CommentDto> createComment(@PathVariable long postId,
+                                                    @RequestBody CommentDto commentDto) {
+        CommentDto createdComment = commentService.createComment(postId, commentDto);
+        return new ResponseEntity<>(createdComment, HttpStatus.OK);
+    }
+}

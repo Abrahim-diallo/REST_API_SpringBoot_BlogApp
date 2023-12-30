@@ -1,6 +1,5 @@
 package net.sencodester.springboot.services;
 
-
 import net.sencodester.springboot.payload.PostDto;
 import net.sencodester.springboot.payload.PostResponse;
 
@@ -16,6 +15,5 @@ public interface PostService {
     PostDto updatePost(PostDto postDto, long id);
 
     void deletePostById(long id);
-
 
 }

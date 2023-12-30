@@ -4,7 +4,7 @@ import net.sencodester.springboot.entites.Post;
 import net.sencodester.springboot.exceptions.ResourceNotFoundException;
 import net.sencodester.springboot.payload.PostDto;
 import net.sencodester.springboot.payload.PostResponse;
-import net.sencodester.springboot.repositories.PostRipository;
+import net.sencodester.springboot.repositories.PostRepository;
 import net.sencodester.springboot.services.PostService;
 import net.sencodester.springboot.utils.AppConstants;
 import org.springframework.data.domain.Page;
@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 @Service
 public class PostServiceImpl implements PostService {
 
-    private final PostRipository postRepository;
+    private final PostRepository postRepository;
 
-    public PostServiceImpl(PostRipository postRepository) {
+    public PostServiceImpl(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 
@@ -95,8 +95,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         postRepository.delete(post);
     }
-
-    // Convertir l'ENTITÉ en DTO
+        // Convertir l'ENTITÉ en DTO
 
     private PostDto mapToDto(Post post) {
         PostDto postDto = new PostDto();
