@@ -2,6 +2,7 @@ package net.sencodester.springboot.servicesimpl;
 
 import net.sencodester.springboot.entites.Comment;
 import net.sencodester.springboot.entites.Post;
+import net.sencodester.springboot.exceptions.BlogapiException;
 import net.sencodester.springboot.exceptions.ResourceNotFoundException;
 import net.sencodester.springboot.payload.CommentDto;
 import net.sencodester.springboot.repositories.CommentRepository;
@@ -9,9 +10,11 @@ import net.sencodester.springboot.repositories.PostRepository;
 import net.sencodester.springboot.services.CommentService;
 import net.sencodester.springboot.services.PostService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -43,6 +46,21 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> comments = commentRepository.findByPostId(postId);
         //convertir les entités en dtos
         return comments.stream().map(this::mapToDto).toList();
+    }
+
+    @Override
+    public CommentDto getCommentById(Long postId, Long commentId) {
+        // Retrieve the comment by postId
+        Post post = postRepository.findById(postId).
+                orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+        Comment comment = commentRepository.findById(commentId).
+                orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+        //
+        if (!Objects.equals(comment.getPost().getId(), postId)) {
+            throw new BlogapiException(HttpStatus.NOT_FOUND, "Comment not found");
+        }
+        return mapToDto(comment);
+
     }
 
 
