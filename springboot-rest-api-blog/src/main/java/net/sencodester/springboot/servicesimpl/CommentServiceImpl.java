@@ -8,7 +8,10 @@ import net.sencodester.springboot.repositories.CommentRepository;
 import net.sencodester.springboot.repositories.PostRepository;
 import net.sencodester.springboot.services.CommentService;
 import net.sencodester.springboot.services.PostService;
+
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -36,24 +39,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Iterable<CommentDto> findAllComments() {
-        return null;
+    public  List<CommentDto> getCommentsByPostById(Long postId) {
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        //convertir les entités en dtos
+        return comments.stream().map(this::mapToDto).toList();
     }
 
-    @Override
-    public CommentDto findById(long id) {
-        return null;
-    }
 
-    @Override
-    public CommentDto updateComment(CommentDto commentDto) {
-        return null;
-    }
-    @Override
-    public void deleteComment(long id) {
-
-    }
-    // Convertir l'ENTITÉ en DTO
     private CommentDto mapToDto(Comment comment) {
         CommentDto commentDto = new CommentDto();
         commentDto.setId(comment.getId());
