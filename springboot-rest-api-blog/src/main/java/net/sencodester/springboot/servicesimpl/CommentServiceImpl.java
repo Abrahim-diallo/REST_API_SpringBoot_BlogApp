@@ -63,6 +63,26 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
+    @Override
+    public CommentDto updateComment(long postId, long commentId, CommentDto commentResquest) {
+        // Retrieve the comment by postId
+        Post post = postRepository.findById(postId).
+                orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+        Comment comment = commentRepository.findById(commentResquest.getId()).
+                orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentResquest.getId()));
+        if (!Objects.equals(comment.getPost().getId(), postId)) {
+            throw new BlogapiException(HttpStatus.NOT_FOUND, "Comment not found");
+        }
+        // Update the comment
+        comment.setName(commentResquest.getName());
+        comment.setBody(commentResquest.getBody());
+        comment.setEmail(commentResquest.getEmail());
+        // Enregistrer l'ENTITÉ
+        Comment newComment = commentRepository.save(comment);
+        CommentDto commentResponse = mapToDto(newComment);
+        return commentResponse;
+    }
+
 
     private CommentDto mapToDto(Comment comment) {
         CommentDto commentDto = new CommentDto();

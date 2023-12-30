@@ -2,13 +2,13 @@ package net.sencodester.springboot.controller;
 
 import net.sencodester.springboot.payload.CommentDto;
 import net.sencodester.springboot.services.CommentService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api/posts/{postId}/comments")
 public class CommentController {
     private final CommentService commentService;
 
@@ -16,20 +16,27 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping(value = "/posts/{postId}/comments", consumes = "application/json")
+    @PostMapping
     public ResponseEntity<CommentDto> createComment(@PathVariable long postId,
                                                     @RequestBody CommentDto commentDto) {
-        CommentDto createdComment = commentService.createComment(postId, commentDto);
-        return new ResponseEntity<>(createdComment, HttpStatus.OK);
+        return ResponseEntity.ok(commentService.createComment(postId, commentDto));
     }
-    @GetMapping(value = "/posts/{postId}/comments", produces = "application/json")
+
+    @GetMapping
     public ResponseEntity<List<CommentDto>> getCommentsByPost(@PathVariable long postId) {
-        List<CommentDto> comments = commentService.getCommentsByPostById(postId);
-        return new ResponseEntity<>(comments, HttpStatus.OK);
+        return ResponseEntity.ok(commentService.getCommentsByPostById(postId));
     }
-    @GetMapping(value = "/posts/{postId}/comments/{commentId}", produces = "application/json")
-    public ResponseEntity<CommentDto> getCommentById(@PathVariable long postId, @PathVariable long commentId) {
-        CommentDto comment = commentService.getCommentById(postId, commentId);
-        return new ResponseEntity<>(comment, HttpStatus.OK);
+
+    @GetMapping("/{commentId}")
+    public ResponseEntity<CommentDto> getCommentById(@PathVariable long postId,
+                                                     @PathVariable long commentId) {
+        return ResponseEntity.ok(commentService.getCommentById(postId, commentId));
+    }
+    @PutMapping("/{commentId}")
+    public ResponseEntity<CommentDto> updateComment(@PathVariable long postId,
+                                                     @PathVariable long commentId,
+                                                     @RequestBody CommentDto commentDto) {
+        return ResponseEntity.ok(commentService.updateComment(postId, commentId, commentDto));
+
     }
 }
