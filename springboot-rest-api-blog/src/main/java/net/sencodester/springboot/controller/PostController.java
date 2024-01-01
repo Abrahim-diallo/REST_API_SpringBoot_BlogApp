@@ -1,5 +1,6 @@
 package net.sencodester.springboot.controller;
 
+import jakarta.validation.Valid;
 import net.sencodester.springboot.payload.PostDto;
 import net.sencodester.springboot.payload.PostResponse;
 import net.sencodester.springboot.services.PostService;
@@ -19,7 +20,7 @@ public class PostController {
     }
     //--------------------------------creer un post blog--------------------------------
     @RequestMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
+    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
     //----------------------get all posts rest api------
@@ -40,7 +41,7 @@ public class PostController {
     }
     //--------------------------update post by id--------------------------
     @PutMapping("/{id}")
-    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable long id) {
+    public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto, @PathVariable long id) {
         PostDto postResponse = postService.updatePost(postDto, id);
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
     }
