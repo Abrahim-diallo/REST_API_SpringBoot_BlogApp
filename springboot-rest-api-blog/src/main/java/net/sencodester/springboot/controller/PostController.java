@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import net.sencodester.springboot.payload.PostDto;
 import net.sencodester.springboot.payload.PostResponse;
 import net.sencodester.springboot.services.PostService;
-import net.sencodester.springboot.utils.AppConstants;
+import net.sencodester.springboot.utils.Constants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,10 +26,10 @@ public class PostController {
     //----------------------get all posts rest api------
     @GetMapping
     public PostResponse getAllPosts(
-            @RequestParam(value = "pageNo", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
-            @RequestParam(value = "pageSize", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int pageSize,
-            @RequestParam(value = "sortBy", required = false, defaultValue = AppConstants.DEFAULT_SORT_BY) String sortBy,
-            @RequestParam(value = "isAscending", required = false, defaultValue = AppConstants.DEFAULT_SORT_DIRECTION) String isAscending) {
+            @RequestParam(value = "pageNo", required = false, defaultValue = Constants.DEFAULT_PAGE_NUMBER) int pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = Constants.DEFAULT_PAGE_SIZE) int pageSize,
+            @RequestParam(value = "sortBy", required = false, defaultValue = Constants.DEFAULT_SORT_BY) String sortBy,
+            @RequestParam(value = "isAscending", required = false, defaultValue = Constants.DEFAULT_SORT_DIRECTION) String isAscending) {
 
         return postService.getAllPosts(pageNo, pageSize, sortBy, isAscending);
     }

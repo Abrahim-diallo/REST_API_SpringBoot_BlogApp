@@ -1,4 +1,4 @@
-package net.sencodester.springboot.servicesimpl;
+package net.sencodester.springboot.servicesImpl;
 
 import net.sencodester.springboot.entites.Post;
 import net.sencodester.springboot.exceptions.ResourceNotFoundException;
@@ -7,7 +7,7 @@ import net.sencodester.springboot.payload.PostMapper;
 import net.sencodester.springboot.payload.PostResponse;
 import net.sencodester.springboot.repositories.PostRepository;
 import net.sencodester.springboot.services.PostService;
-import net.sencodester.springboot.utils.AppConstants;
+import net.sencodester.springboot.utils.Constants;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -46,7 +46,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDirection) {
-        boolean isAscending = AppConstants.DEFAULT_SORT_DIRECTION.equalsIgnoreCase(sortDirection);
+        boolean isAscending = Constants.DEFAULT_SORT_DIRECTION.equalsIgnoreCase(sortDirection);
 
         Page<Post> pageable = postRepository.findAll(
                 PageRequest.of(

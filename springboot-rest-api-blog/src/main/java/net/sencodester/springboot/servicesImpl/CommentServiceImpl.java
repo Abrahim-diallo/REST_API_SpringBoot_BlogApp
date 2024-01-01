@@ -1,4 +1,4 @@
-package net.sencodester.springboot.servicesimpl;
+package net.sencodester.springboot.servicesImpl;
 
 import net.sencodester.springboot.entites.Comment;
 import net.sencodester.springboot.entites.Post;

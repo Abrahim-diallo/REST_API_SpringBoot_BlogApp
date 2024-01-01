@@ -1,5 +1,12 @@
-# PostgreSQL Database Configurations
 spring:
+  # Spring Security Configuration
+  security:
+    user:
+      name: @Khalid
+      password: @passwordAdmin
+      roles: USER
+
+  # PostgreSQL Database Configurations
   datasource:
     url: jdbc:postgresql://localhost:5432/blogdatabase
     driver-class-name: org.postgresql.Driver
@@ -10,8 +17,6 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        # Suppression de la propriété dialect, car Hibernate la détecte automatiquement
-        # dialect: org.hibernate.dialect.PostgreSQLDialect
         show_sql: true  # Active l'affichage des requêtes SQL dans les logs
         format_sql: true  # Formate les requêtes SQL pour une meilleure lisibilité
 
@@ -19,8 +24,14 @@ spring:
 logging:
   level:
     root: INFO
-    org.hibernate.SQL: DEBUG  # Affiche les requêtes SQL
-    org.hibernate.type.descriptor.sql: trace  # Affiche les détails des valeurs des paramètres bindés et les résultats des requêtes
+    org:
+      hibernate:
+        SQL: DEBUG  # Affiche les requêtes SQL
+        type:
+          descriptor:
+            sql: trace  # Affiche les détails des valeurs des paramètres bindés et les résultats des requêtes
+      springframework:
+        security: DEBUG  # Debug level for Spring Security
 
 # Autres configurations...
 server:
