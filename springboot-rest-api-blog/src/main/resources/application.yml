@@ -10,15 +10,18 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        show_sql: true  # Affiche les requêtes SQL dans les logs
+        # Suppression de la propriété dialect, car Hibernate la détecte automatiquement
+        # dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true  # Active l'affichage des requêtes SQL dans les logs
         format_sql: true  # Formate les requêtes SQL pour une meilleure lisibilité
 
 # Logging Configurations
 logging:
   level:
     root: INFO
-    org.hibernate.SQL: DEBUG  # Afficher les requêtes SQL
-    org.hibernate.type.descriptor.sql: trace  # Afficher les détails des valeurs des paramètres bindés
+    org.hibernate.SQL: DEBUG  # Affiche les requêtes SQL
+    org.hibernate.type.descriptor.sql: trace  # Affiche les détails des valeurs des paramètres bindés et les résultats des requêtes
 
 # Autres configurations...
+server:
+  port: 8082

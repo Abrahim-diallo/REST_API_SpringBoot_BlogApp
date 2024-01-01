@@ -3,6 +3,7 @@ package net.sencodester.springboot.servicesimpl;
 import net.sencodester.springboot.entites.Post;
 import net.sencodester.springboot.exceptions.ResourceNotFoundException;
 import net.sencodester.springboot.payload.PostDto;
+import net.sencodester.springboot.payload.PostMapper;
 import net.sencodester.springboot.payload.PostResponse;
 import net.sencodester.springboot.repositories.PostRepository;
 import net.sencodester.springboot.services.PostService;
@@ -12,19 +13,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-
 import java.util.Date;
 import java.util.List;
-
 import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final PostMapper postMapper;
 
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository,PostMapper postMapper) {
         this.postRepository = postRepository;
+        this.postMapper = postMapper;
+
     }
 
     @Override
@@ -68,6 +70,7 @@ public class PostServiceImpl implements PostService {
 
         return postResponse;
     }
+
     @Override
     public PostDto getPostById(long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post not found with", "id", id));
@@ -95,26 +98,11 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         postRepository.delete(post);
     }
-        // Convertir l'ENTITÉ en DTO
-
     private PostDto mapToDto(Post post) {
-        PostDto postDto = new PostDto();
-        postDto.setId(post.getId());
-        postDto.setTitle(post.getTitle());
-        postDto.setAuthor(post.getAuthor());
-        postDto.setContent(post.getContent());
-        postDto.setPostDate(post.getPostDate());
-        postDto.setDescription(post.getDescription()); // Ligne corrigée
-        return postDto;
+        return postMapper.mapToDto(post);
     }
 
-    // Convertir DTO en ENTITÉ
     private Post mapToEntity(PostDto postDto) {
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setContent(postDto.getContent());
-        post.setAuthor(postDto.getAuthor());
-        post.setDescription(postDto.getDescription());
-        return post;
+        return postMapper.mapToEntity(postDto);
     }
 }
