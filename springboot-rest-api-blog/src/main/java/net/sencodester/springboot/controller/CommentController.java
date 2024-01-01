@@ -1,5 +1,6 @@
 package net.sencodester.springboot.controller;
 
+import jakarta.validation.Valid;
 import net.sencodester.springboot.payload.CommentDto;
 import net.sencodester.springboot.services.CommentService;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<CommentDto> createComment(@PathVariable long postId,
-                                                    @RequestBody CommentDto commentDto) {
+                                                    @Valid @RequestBody CommentDto commentDto) {
         return ResponseEntity.ok(commentService.createComment(postId, commentDto));
     }
     @GetMapping
@@ -34,7 +35,7 @@ public class CommentController {
     @PutMapping("/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable long postId,
                                                      @PathVariable long commentId,
-                                                     @RequestBody CommentDto commentDto) {
+                                                     @Valid @RequestBody CommentDto commentDto) {
         return ResponseEntity.ok(commentService.updateComment(postId, commentId, commentDto));
 
     }

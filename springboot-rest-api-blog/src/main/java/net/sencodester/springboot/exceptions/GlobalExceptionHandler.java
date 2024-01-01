@@ -14,8 +14,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -33,8 +31,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // Autres handleBlogapiException...
-    @ExceptionHandler(BlogapiException.class)
-    public ResponseEntity<ErrorDetails> handleBlogapiException(BlogapiException ex, WebRequest request) {
+    @ExceptionHandler(BlogApiException.class)
+    public ResponseEntity<ErrorDetails> handleBlogapiException(BlogApiException ex, WebRequest request) {
         logger.error("handleBlogapiException: {}", ex.getMessage());
         ErrorDetails errorDetails = new ErrorDetails(
                 LocalDateTime.now(),
@@ -52,23 +50,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
                                                                   HttpStatusCode status,
                                                                   WebRequest request) {
-        Map<String, String> errors = ex.getBindingResult().getFieldErrors().stream()
-                .collect(Collectors.toMap(
-                        fieldError -> fieldError.getField(),
-                        fieldError -> fieldError.getDefaultMessage(),
-                        (message1, message2) -> message1 + "; " + message2));
-
         ErrorDetails errorDetails = new ErrorDetails(
                 LocalDateTime.now(),
                 "Validation Failed",
-                errors.toString());
+                "Validation errors occurred");
 
+        ex.getBindingResult().getFieldErrors().forEach(fieldError ->
+                errorDetails.addValidationError(fieldError.getField(), fieldError.getDefaultMessage())
+        );
         return new ResponseEntity<>(errorDetails, headers, HttpStatus.BAD_REQUEST);
     }
 }
