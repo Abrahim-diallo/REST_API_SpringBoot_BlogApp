@@ -11,50 +11,57 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping()
 public class PostController {
-    private final PostService postService;
+
+    private PostService postService;
+
     public PostController(PostService postService) {
         this.postService = postService;
     }
-    //--------------------------------creer un post blog--------------------------------
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    @RequestMapping
-    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
+
+    @PreAuthorize("hasRole('ADMIN')")
+    // create blog post rest api
+    @PostMapping("/api/v1/posts")
+    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto){
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
-    //----------------------get all posts rest api------
-    @GetMapping
-    public PostResponse getAllPosts(
-            @RequestParam(value = "pageNo", required = false, defaultValue = Constants.DEFAULT_PAGE_NUMBER) int pageNo,
-            @RequestParam(value = "pageSize", required = false, defaultValue = Constants.DEFAULT_PAGE_SIZE) int pageSize,
-            @RequestParam(value = "sortBy", required = false, defaultValue = Constants.DEFAULT_SORT_BY) String sortBy,
-            @RequestParam(value = "isAscending", required = false, defaultValue = Constants.DEFAULT_SORT_DIRECTION) String isAscending) {
 
-        return postService.getAllPosts(pageNo, pageSize, sortBy, isAscending);
+    // get all posts rest api
+    @GetMapping("/api/v1/posts")
+    public PostResponse getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = Constants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = Constants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+    ){
+        return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
-    //--------------------------get post by id--------------------------
-    @GetMapping("/{id}")
-    public ResponseEntity<PostDto> getPostById(@PathVariable long id) {
-        PostDto postDto = postService.getPostById(id);
-        return new ResponseEntity<>(postDto, HttpStatus.OK);
+
+    // get post by id
+    @GetMapping(value = "/api/v1/posts/{id}")
+    public ResponseEntity<PostDto> getPostByIdV1(@PathVariable(name = "id") long id){
+        return ResponseEntity.ok(postService.getPostById(id));
     }
-    //--------------------------update post by id--------------------------
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    @PutMapping("/{id}")
-    public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto, @PathVariable long id) {
+
+    @PreAuthorize("hasRole('ADMIN')")
+    // update post by id rest api
+    @PutMapping("/api/v1/posts/{id}")
+    public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto, @PathVariable(name = "id") long id){
+
         PostDto postResponse = postService.updatePost(postDto, id);
+
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
     }
-    //--------------------------delete post by id--------------------------
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePostById(@PathVariable long id) {
+
+    @PreAuthorize("hasRole('ADMIN')")
+    // delete post rest api
+    @DeleteMapping("/api/v1/posts/{id}")
+    public ResponseEntity<String> deletePost(@PathVariable(name = "id") long id){
+
         postService.deletePostById(id);
-        return new ResponseEntity<>("Post deleted successfully", HttpStatus.OK);
+
+        return new ResponseEntity<>("Post entity deleted successfully.", HttpStatus.OK);
     }
-
-
 }
