@@ -1,12 +1,13 @@
 package net.sencodester.springboot.entites;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Entity

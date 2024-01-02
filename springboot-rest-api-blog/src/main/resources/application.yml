@@ -1,10 +1,10 @@
 spring:
   # Spring Security Configuration
   security:
-    user:
-      name: @Khalid
-      password: @passwordAdmin
-      roles: USER
+    #user:
+      #name: Khalid
+      #password: passwordAdmin
+      #roles: USER
 
   # PostgreSQL Database Configurations
   datasource:
@@ -13,6 +13,7 @@ spring:
     username: postgres
     password: postgres
   jpa:
+    open-in-view=false:
     hibernate:
       ddl-auto: update
     properties:
@@ -35,4 +36,4 @@ logging:
 
 # Autres configurations...
 server:
-  port: 8082
+  port: 8088
