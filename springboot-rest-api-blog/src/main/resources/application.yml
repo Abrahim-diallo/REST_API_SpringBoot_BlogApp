@@ -36,8 +36,8 @@ logging:
 
 # Autres configurations...
 server:
-  port: 8088
+  port: 8888
 app:
   jwt:
-    secret: jwt_secretKey
-    expiration: 60480000  # Expiration en secondes
+    secret: JWTSecretKey
+    expiration-milliseconds: 604800000

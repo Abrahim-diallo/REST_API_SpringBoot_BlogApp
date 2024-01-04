@@ -29,7 +29,8 @@ import java.util.Collections;
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private UserRepository userRepository;
@@ -37,49 +38,48 @@ public class AuthController {
     @Autowired
     private RoleRepository roleRepository;
 
-    private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtTokenProvider tokenProvider;
 
-    public AuthController(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
     @PostMapping("/signin")
-    public ResponseEntity<JWTAuthResponse> authentUser(@RequestBody LoginDto loginDto) throws Exception {
-        String usernameOrEmail = loginDto.getUsernameOrEmail();
-        String password = loginDto.getPassword();
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(usernameOrEmail, password));
+    public ResponseEntity<JWTAuthResponse> authenticateUser(@RequestBody LoginDto loginDto){
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        //GET token from token provider
-         String token = jwtTokenProvider.generateToken(authentication);
-         return ResponseEntity.ok(new JWTAuthResponse(token));
+
+        // get token form tokenProvider
+        String token = tokenProvider.generateToken(authentication);
+
+        return ResponseEntity.ok(new JWTAuthResponse(token));
     }
     @PostMapping("/signup")
-    @Transactional
-    public ResponseEntity<?> signUp(@RequestBody SignUpDto signUpDto) {
-        // Verrificatio si l'username existe déjà dans la base de données.'
-        if (userRepository.existsByUsername(signUpDto.getUsername())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already exists");
+    public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto){
+
+        // add check for username exists in a DB
+        if(userRepository.existsByUsername(signUpDto.getUsername())){
+            return new ResponseEntity<>("Username is already taken!", HttpStatus.BAD_REQUEST);
         }
-        // Verrificatio si l'email existe déjà dans la base de données.'
-        if (userRepository.existsByEmail(signUpDto.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
+
+        // add check for email exists in DB
+        if(userRepository.existsByEmail(signUpDto.getEmail())){
+            return new ResponseEntity<>("Email is already taken!", HttpStatus.BAD_REQUEST);
         }
-        // Création de l'utilisateur'
+        // create user object
         User user = new User();
         user.setName(signUpDto.getName());
         user.setUsername(signUpDto.getUsername());
-        // setter et l'Encodage du mot de passe.
-        user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
-        //setter le email
         user.setEmail(signUpDto.getEmail());
+        user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+
+        Role roles = roleRepository.findByName("ROLE_ADMIN").get();
+        user.setRoles(Collections.singleton(roles));
+
         userRepository.save(user);
-        // Création de la rôle 'ROLE_ADMIN'
-        Role role = roleRepository.findByName("ROLE_ADMIN").get();
-        // setter dans Collection singleton
-        user.setRoles(Collections.singleton(role));
-        // Sauvegarde de l'utilisateur dans la base de données.'
-        userRepository.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
+
+        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
+
     }
 }

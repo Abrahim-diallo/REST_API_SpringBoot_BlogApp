@@ -2,7 +2,7 @@ package net.sencodester.springboot.servicesImpl;
 
 import net.sencodester.springboot.entites.Comment;
 import net.sencodester.springboot.entites.Post;
-import net.sencodester.springboot.exceptions.BlogApiException;
+import net.sencodester.springboot.exceptions.BlogAPIException;
 import net.sencodester.springboot.exceptions.ResourceNotFoundException;
 import net.sencodester.springboot.payload.CommentDto;
 import net.sencodester.springboot.payload.CommentMapper;
@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
                 orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
         //
         if (!Objects.equals(comment.getPost().getId(), postId)) {
-            throw new BlogApiException(HttpStatus.NOT_FOUND, "Comment not found");
+            throw new BlogAPIException(HttpStatus.NOT_FOUND, "Comment not found");
         }
         return mapToDto(comment);
 
@@ -73,7 +73,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentResquest.getId()).
                 orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentResquest.getId()));
         if (!Objects.equals(comment.getPost().getId(), postId)) {
-            throw new BlogApiException(HttpStatus.NOT_FOUND, "Comment not found");
+            throw new BlogAPIException(HttpStatus.NOT_FOUND, "Comment not found");
         }
         // Update the comment
         comment.setName(commentResquest.getName());
@@ -93,7 +93,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId).
                 orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
         if (!Objects.equals(comment.getPost().getId(), postId)) {
-            throw new BlogApiException(HttpStatus.NOT_FOUND, "Comment not found");
+            throw new BlogAPIException(HttpStatus.NOT_FOUND, "Comment not found");
         }
         commentRepository.delete(comment);
     }
