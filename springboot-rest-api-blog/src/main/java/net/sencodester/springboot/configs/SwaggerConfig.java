@@ -26,7 +26,7 @@ public class SwaggerConfig {
         return new ApiInfo(
                 "Spring Boot Blog REST APIs",
                 "Spring Boot Blog REST API Documentation",
-                "1.0", // Mettez à jour la version si nécessaire
+                "1.0",
                 "Terms of service",
                 new Contact("Ibrahima DIALLO", "www.sencodester.net", "lodiaa89@gmail.com"),
                 "License of API",
